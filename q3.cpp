@@ -1,37 +1,62 @@
-#include<bits/stdc++.h>
-#define ll long long int 
-using namespace std;  
-string CRC(string dataword, string divisor, ll mode) {
-    string temp = dataword;
-    if(mode) for(ll i = 0; i < divisor.size()-1; i++)  dataword += "0";
-    ll start = 0;
-    ll n = divisor.size();     
-    while(start + n <= dataword.size()) {
-        ll flag = start+n;   
-        for(ll i = start, j = 0; j < n; j++,i++) {
-            if(dataword[i] == divisor[j]) dataword[i] = '0';  
-            else dataword[i] = '1';
-            if(dataword[i] == '1' && flag == start+n) {
-                flag = i; 
-            }
-        }
-        start = flag;   
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+string crcEncode(string& dataword, string& divisor) {
+string codeword = dataword;
+string temp = dataword;
+
+    // Append zeros to the dataword
+    for (int i = 0; i < divisor.length() - 1; i++)
+        codeword += "0";
+
+
+    // Perform modulo-2 division
+    for (int i = 0; i <= codeword.length() - divisor.length();) {
+        for (int j = 0; j < divisor.length(); j++) 
+            codeword[i + j] = codeword[i + j] == divisor[j] ? '0' : '1';
+
+        for (; i < codeword.length() && codeword[i] != '1'; i++);
     }
-    string res = "";  
-    string pre = "";  
-    for(ll i = start; i < dataword.size(); i++) res += dataword[i];  
-        for(ll i = 0; i<(n-1-res.size()); i++) pre += "0";
-        res = pre + res;  
-        return temp + res; 
-    
-    
 
+
+    for(int i=codeword.length()-divisor.length()+1; i<codeword.length(); i++)
+        temp+= codeword[i];
+
+    return temp;
 }
-int main() {
-    string dataword, divisor;
-    cin >> dataword >> divisor;   
-    string codeword = CRC(dataword,divisor,1);
-    cout << codeword << endl;  
-    cout << CRC(codeword,divisor,0) << endl;
 
+bool crcCheck(string& receivedCodeword, string& divisor) {
+string codeword = receivedCodeword;
+
+    // Perform modulo-2 division
+    for (int i = 0; i <= codeword.length() - divisor.length();) {
+        for (int j = 0; j < divisor.length(); j++)
+            codeword[i + j] = codeword[i + j] == divisor[j] ? '0' : '1';
+
+        for (; i < codeword.length() && codeword[i] != '1'; i++);
+    }
+
+    // If remainder is zero, codeword is not corrupted
+    for (char c : codeword)
+        if (c == '1') return true;
+
+    return false;
+}
+
+int main() {
+string dataword = "110101";  // Example dataword
+string divisor = "1011";     // Example divisor
+
+string codeword = crcEncode(dataword, divisor);
+cout << "CRC codeword: " << codeword <<endl;
+
+    // Simulating corruption of codeword
+    // codeword[2] = '1';
+
+    bool isCorrupted = crcCheck(codeword, divisor);
+cout << "Codeword is corrupted: " << (isCorrupted ? "Yes" : "No") <<endl;
+
+    return 0;
 }
