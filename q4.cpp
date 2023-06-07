@@ -15,7 +15,7 @@ vector<int> input() {
 ll checksum(vector<int>& data) {
     ll sum = 0; 
     for(ll i = 0; i<data.size(); i++) sum += data[i];
-    bitset<bit_size>bit;  
+    bitset<bit_size+32>bit;  
     bit = sum;  
     ll x = 0, y = 0;   
     for(ll i = 0; i<bit_size; i++) {

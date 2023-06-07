@@ -11,6 +11,7 @@ pair<string,ll> generate(string dataword) {
         dataword += "1";
         parity = 1;  
     }
+    else dataword += "0";
     return {dataword,parity};  
 }
 bool checker(string codeword) {
